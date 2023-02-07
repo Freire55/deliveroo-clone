@@ -1,16 +1,34 @@
 import { View, Text, SafeAreaView, Image, TextInput, ScrollView } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import {ChevronDownIcon,UserIcon, AdjustmentsHorizontalIcon,MagnifyingGlassIcon} from "react-native-heroicons/outline";
 import Categories from "../components/Categories";
+import { useNavigation } from "@react-navigation/native";
+import FeaturedRow from "../components/FeaturedRow";
+import { useState } from "react";
+import sanityClient from '../sanity'
 
 const HomeScreen = () => {
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
+  const [featuredCategories, setFeaturedCategories] = useState([])
 
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerShown: false,
-  //   });
-  // }, []);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, []);
+
+  useEffect(() => {
+    sanityClient.fetch(`
+    *[_type == "featured] {
+      ...,
+      restaurants[]->{
+        ...,
+        dishes[]->
+      }
+    }`).then(data => {
+      setFeaturedCategories(data)
+    })
+  }, []);
 
   return (
     
@@ -45,7 +63,26 @@ const HomeScreen = () => {
         {/* Categories */}
           <Categories />
 
-          {/* Featured Rows */}
+          {/* Featured */}
+          <FeaturedRow
+          id="0"
+          title="Featured"
+          description="Paid placements from our partners"
+          />
+          {/* Tasty Discounts */}
+          <FeaturedRow
+          id="1"
+          title="Tasty Discounts"
+          description="Everyone's been enjoying juicy discounts!"
+          />
+          {/* Offers Near You */}
+          <FeaturedRow
+          id="2"
+          title="Offers near you!"
+          description="Why not support your local restaurant tonight!"
+          />
+
+
       </ScrollView>
     </SafeAreaView>
   );
