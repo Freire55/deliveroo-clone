@@ -19,7 +19,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     sanityClient.fetch(`
-    *[_type == "featured] {
+    *[_type == "featured"] {
       ...,
       restaurants[]->{
         ...,
@@ -64,23 +64,17 @@ const HomeScreen = () => {
           <Categories />
 
           {/* Featured */}
-          <FeaturedRow
-          id="0"
-          title="Featured"
-          description="Paid placements from our partners"
+
+          {featuredCategories?.map(category => (
+
+            
+            <FeaturedRow
+            key={category.id}
+          id={category.id}
+          title={category.name}
+          description={category.short_description}
           />
-          {/* Tasty Discounts */}
-          <FeaturedRow
-          id="1"
-          title="Tasty Discounts"
-          description="Everyone's been enjoying juicy discounts!"
-          />
-          {/* Offers Near You */}
-          <FeaturedRow
-          id="2"
-          title="Offers near you!"
-          description="Why not support your local restaurant tonight!"
-          />
+          ))}
 
 
       </ScrollView>
